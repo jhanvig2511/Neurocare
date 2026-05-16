@@ -1,0 +1,7 @@
+POST http://localhost:5000/api/chat
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "message": "I am feeling sad today"
+}

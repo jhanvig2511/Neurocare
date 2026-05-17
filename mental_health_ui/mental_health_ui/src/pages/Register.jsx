@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/register.css";
 
-/* 🌐 BACKEND URL */
 const BASE_URL = "https://neurocare-backend-3k89.onrender.com";
 
 export default function Register() {
@@ -22,21 +21,13 @@ export default function Register() {
     location: "",
     occupation: "",
     education: "",
-    priorSupport: "",
-    therapyHistory: "",
-    challenges: [],
-    stressLevel: 5,
     goals: "",
-    preferences: [],
     emergencyName: "",
     emergencyPhone: "",
   });
 
   const totalSteps = 4;
 
-  /* =========================
-     HANDLE INPUT CHANGE
-  ========================= */
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -46,9 +37,6 @@ export default function Register() {
     setError("");
   };
 
-  /* =========================
-     VALIDATION
-  ========================= */
   const validateStep = () => {
     if (step === 1) {
       if (
@@ -56,22 +44,12 @@ export default function Register() {
         !formData.email ||
         !formData.password
       ) {
-        setError("Please fill in all required fields");
-        return false;
-      }
-
-      const emailRegex =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (!emailRegex.test(formData.email)) {
-        setError("Please enter a valid email address");
+        setError("Please fill all required fields");
         return false;
       }
 
       if (formData.password.length < 6) {
-        setError(
-          "Password must be at least 6 characters long"
-        );
+        setError("Password must be at least 6 characters");
         return false;
       }
     }
@@ -79,22 +57,14 @@ export default function Register() {
     return true;
   };
 
-  /* =========================
-     NEXT STEP
-  ========================= */
   const handleNext = () => {
     if (validateStep()) {
       setStep(step + 1);
-      setError("");
     }
   };
 
-  /* =========================
-     COMPLETE REGISTRATION
-  ========================= */
   const handleCompleteRegistration = async () => {
     setLoading(true);
-    setError("");
 
     try {
       const response = await axios.post(
@@ -103,33 +73,16 @@ export default function Register() {
       );
 
       if (response.data.token) {
-        localStorage.setItem(
-          "token",
-          response.data.token
-        );
+        localStorage.setItem("token", response.data.token);
 
-        localStorage.setItem(
-          "userId",
-          response.data.user.id
-        );
-
-        localStorage.setItem(
-          "userName",
-          response.data.user.name
-        );
-
-        alert(
-          "Registration Complete! Welcome to NeuroCare 🌿"
-        );
+        alert("Registration Successful 🌿");
 
         navigate("/user-dashboard");
       }
     } catch (error) {
-      console.log(error);
-
       setError(
         error.response?.data?.message ||
-          "Registration failed. Try again."
+          "Registration failed"
       );
     } finally {
       setLoading(false);
@@ -141,52 +94,39 @@ export default function Register() {
       <div className="register-container">
         <div className="register-card">
 
-          {/* HEADER */}
           <div className="register-header">
-            <button
-              onClick={() => navigate("/")}
-              className="close-btn"
-            >
-              ✕
-            </button>
-
             <h1>Welcome to NeuroCare 🌿</h1>
           </div>
 
-          {/* ERROR */}
           {error && (
             <div className="error-banner">
-              ⚠️ {error}
+              {error}
             </div>
           )}
 
-          {/* STEP 1 */}
           {step === 1 && (
             <div className="form-section">
 
-              <label>Name</label>
               <input
                 type="text"
                 name="name"
-                placeholder="Enter your name"
+                placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
               />
 
-              <label>Email</label>
               <input
                 type="email"
                 name="email"
-                placeholder="Enter your email"
+                placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
               />
 
-              <label>Password</label>
               <input
                 type="password"
                 name="password"
-                placeholder="Enter password"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -194,30 +134,29 @@ export default function Register() {
             </div>
           )}
 
-          {/* STEP 2 */}
           {step === 2 && (
             <div className="form-section">
 
-              <label>Age</label>
               <input
                 type="number"
                 name="age"
+                placeholder="Age"
                 value={formData.age}
                 onChange={handleChange}
               />
 
-              <label>Gender</label>
               <input
                 type="text"
                 name="gender"
+                placeholder="Gender"
                 value={formData.gender}
                 onChange={handleChange}
               />
 
-              <label>Location</label>
               <input
                 type="text"
                 name="location"
+                placeholder="Location"
                 value={formData.location}
                 onChange={handleChange}
               />
@@ -225,29 +164,28 @@ export default function Register() {
             </div>
           )}
 
-          {/* STEP 3 */}
           {step === 3 && (
             <div className="form-section">
 
-              <label>Occupation</label>
               <input
                 type="text"
                 name="occupation"
+                placeholder="Occupation"
                 value={formData.occupation}
                 onChange={handleChange}
               />
 
-              <label>Education</label>
               <input
                 type="text"
                 name="education"
+                placeholder="Education"
                 value={formData.education}
                 onChange={handleChange}
               />
 
-              <label>Goals</label>
               <textarea
                 name="goals"
+                placeholder="Goals"
                 value={formData.goals}
                 onChange={handleChange}
               />
@@ -255,22 +193,21 @@ export default function Register() {
             </div>
           )}
 
-          {/* STEP 4 */}
           {step === 4 && (
             <div className="form-section">
 
-              <label>Emergency Contact Name</label>
               <input
                 type="text"
                 name="emergencyName"
+                placeholder="Emergency Contact Name"
                 value={formData.emergencyName}
                 onChange={handleChange}
               />
 
-              <label>Emergency Contact Phone</label>
               <input
-                type="tel"
+                type="text"
                 name="emergencyPhone"
+                placeholder="Emergency Contact Phone"
                 value={formData.emergencyPhone}
                 onChange={handleChange}
               />
@@ -278,7 +215,6 @@ export default function Register() {
             </div>
           )}
 
-          {/* FOOTER */}
           <div className="register-footer">
 
             <button

@@ -13,11 +13,10 @@ const app = express();
 const server = http.createServer(app);
 
 /* =======================
-   ENV FRONTEND URL
+   FRONTEND URL (PRODUCTION SAFE)
 ======================= */
 const FRONTEND_URL =
-  process.env.FRONTEND_URL ||
-  "http://localhost:3000";
+  process.env.FRONTEND_URL || "*";
 
 /* =======================
    MIDDLEWARE
@@ -114,6 +113,7 @@ app.get("/users", (req, res) => {
 
   db.query(sql, (err, results) => {
     if (err) {
+      console.error("DB Error:", err.message);
       return res.status(500).json({
         message: "Error fetching users",
       });

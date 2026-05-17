@@ -1,5 +1,3 @@
-# app.py
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import pipeline
@@ -20,7 +18,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://neurocare-git-main-jhanvi-gupta-s-projects.vercel.app"
+        "http://localhost:3000/",
+        "https://neurocare-git-main-jhanvi-gupta-s-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -39,15 +38,10 @@ emotion_model = pipeline(
 spell = Speller(lang="en")
 
 # =========================
-# MEMORY
-# =========================
-conversation_history = {}
-
-# =========================
 # INPUT SCHEMA
 # =========================
 class Message(BaseModel):
-    session_id: str
+    session_id: str | None = None
     message: str
 
 # =========================
@@ -109,18 +103,6 @@ def counsellor_contact():
     )
 
 # =========================
-# EMOTION MAPPING
-# =========================
-def map_condition(emotion: str) -> str:
-    if emotion == "sadness":
-        return "depression"
-    if emotion == "fear":
-        return "anxiety"
-    if emotion == "anger":
-        return "anger"
-    return "stress"
-
-# =========================
 # RESPONSE ENGINE
 # =========================
 def generate_response(text: str, emotion: str) -> str:
@@ -133,7 +115,7 @@ def generate_response(text: str, emotion: str) -> str:
         )
 
     if user_wants_to_share(text):
-        return "I'm here for you 💛. Tell me anything."
+        return "I'm here for you 💛 Tell me anything."
 
     if is_asking_for_contact(text):
         return psychiatrist_contact()
@@ -146,6 +128,9 @@ def generate_response(text: str, emotion: str) -> str:
 
     if emotion == "anger":
         return "Pause and take slow breaths. Step away for a moment."
+
+    if emotion == "joy":
+        return "That's wonderful 😄 Keep going!"
 
     return "You're doing okay. Take things one step at a time 🌿"
 
@@ -161,7 +146,7 @@ def chat(data: Message):
     try:
         result = emotion_model(clean_text)[0]
         emotion = max(result, key=lambda x: x["score"])["label"]
-    except:
+    except Exception:
         emotion = "neutral"
 
     reply = generate_response(clean_text, emotion)

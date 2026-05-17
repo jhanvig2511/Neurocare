@@ -1,34 +1,57 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/login.css";
+
+/* 🌐 BACKEND URL */
+const BASE_URL = "https://neurocare-production.up.railway.app";
 
 function Login() {
   const [role, setRole] = useState("user");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (role === "user") {
-      navigate("/user-dashboard");
-    } else {
-      navigate("/admin/dashboard");
+    try {
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
+        email,
+        password,
+        role,
+      });
+
+      /* SAVE TOKEN (IMPORTANT) */
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      /* REDIRECT BASED ON ROLE */
+      if (role === "user") {
+        navigate("/user-dashboard");
+      } else {
+        navigate("/admin/dashboard");
+      }
+
+    } catch (err) {
+      console.log(err);
+      alert("Login failed ❌ Check credentials or server");
     }
   };
 
   return (
     <div className="login-container">
 
-      {/* Left Visual Section */}
+      {/* Left Side */}
       <div className="login-left">
         <h1>Welcome Back 🌱</h1>
         <p>
-          Take a breath. You’re entering a safe and supportive space designed
-          for clarity, calm, and care.
+          Take a breath. You’re entering a safe and supportive space.
         </p>
       </div>
 
-      {/* Right Login Card */}
+      {/* Right Side */}
       <div className="login-right">
         <div className="login-card">
 
@@ -51,11 +74,26 @@ function Login() {
             </button>
           </div>
 
-          <h2>{role === "user" ? "User Login" : "Admin Login"}</h2>
+          <h2>
+            {role === "user" ? "User Login" : "Admin Login"}
+          </h2>
 
           <form onSubmit={handleSubmit}>
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
             <button type="submit" className="btn-primary">
               Login

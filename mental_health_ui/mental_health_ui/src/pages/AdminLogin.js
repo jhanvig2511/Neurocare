@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CONFIG from '../config';
 import '../styles/adminLogin.css';
 
 const AdminLogin = () => {
@@ -12,11 +13,14 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
+      const response = await fetch(
+        `${CONFIG.BASE_URL}/api/admin/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(credentials)
+        }
+      );
 
       const data = await response.json();
 
@@ -34,37 +38,30 @@ const AdminLogin = () => {
   return (
     <div className="admin-login-page">
       <div className="admin-login-container">
-        <div className="admin-login-header">
-          <h1>Admin Portal</h1>
-          <p>Sign in to access the dashboard</p>
-        </div>
+        <h1>Admin Portal</h1>
 
         {error && <div className="error-message">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="admin-login-form">
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              value={credentials.email}
-              onChange={(e) => setCredentials({...credentials, email: e.target.value})}
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={credentials.email}
+            onChange={(e) =>
+              setCredentials({ ...credentials, email: e.target.value })
+            }
+          />
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              value={credentials.password}
-              onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-              required
-            />
-          </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={credentials.password}
+            onChange={(e) =>
+              setCredentials({ ...credentials, password: e.target.value })
+            }
+          />
 
-          <button type="submit" className="admin-login-btn">
-            Sign In
-          </button>
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>

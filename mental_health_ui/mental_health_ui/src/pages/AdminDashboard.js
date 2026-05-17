@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/adminDashboard.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/adminDashboard.css";
+
+/* =======================
+   🔥 PRODUCTION API URL
+======================= */
+const API_BASE =
+  "https://neurocare-production.up.railway.app";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+
+  const [activeTab, setActiveTab] = useState("overview");
+
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeChats: 0,
     completedQuestionnaires: 0,
-    pendingReviews: 0
+    pendingReviews: 0,
   });
 
   const [users, setUsers] = useState([]);
@@ -21,241 +29,173 @@ const AdminDashboard = () => {
 
   const fetchAdminData = async () => {
     try {
-      const statsRes = await fetch('http://localhost:5000/api/admin/stats');
+      /* STATS */
+      const statsRes = await fetch(`${API_BASE}/api/admin/stats`);
       const statsData = await statsRes.json();
       setStats(statsData);
 
-      const usersRes = await fetch('http://localhost:5000/api/admin/users');
+      /* USERS */
+      const usersRes = await fetch(`${API_BASE}/api/admin/users`);
       const usersData = await usersRes.json();
       setUsers(usersData);
 
-      const responsesRes = await fetch('http://localhost:5000/api/admin/responses');
+      /* RESPONSES */
+      const responsesRes = await fetch(`${API_BASE}/api/admin/responses`);
       const responsesData = await responsesRes.json();
       setResponses(responsesData);
     } catch (error) {
-      console.error('Error fetching admin data:', error);
+      console.error("Error fetching admin data:", error);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    navigate('/admin/login');
+    localStorage.removeItem("adminToken");
+    navigate("/admin/login");
   };
 
   return (
     <div className="admin-dashboard">
+
+      {/* SIDEBAR */}
       <div className="admin-sidebar">
         <div className="admin-logo">NeuroCare Admin</div>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "overview" ? "active" : ""}`}
+          onClick={() => setActiveTab("overview")}
         >
           📊 Overview
         </button>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "users" ? "active" : ""}`}
+          onClick={() => setActiveTab("users")}
         >
           👥 Users
         </button>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'responses' ? 'active' : ''}`}
-          onClick={() => setActiveTab('responses')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "responses" ? "active" : ""}`}
+          onClick={() => setActiveTab("responses")}
         >
           📝 Questionnaire Responses
         </button>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'chats' ? 'active' : ''}`}
-          onClick={() => setActiveTab('chats')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "chats" ? "active" : ""}`}
+          onClick={() => setActiveTab("chats")}
         >
           💬 Chat Sessions
         </button>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('analytics')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "analytics" ? "active" : ""}`}
+          onClick={() => setActiveTab("analytics")}
         >
           📈 Analytics
         </button>
-        
-        <button 
-          className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('settings')}
+
+        <button
+          className={`admin-nav-item ${activeTab === "settings" ? "active" : ""}`}
+          onClick={() => setActiveTab("settings")}
         >
           ⚙️ Settings
         </button>
-        
+
         <button className="admin-nav-item admin-logout" onClick={handleLogout}>
           🚪 Logout
         </button>
       </div>
 
+      {/* CONTENT */}
       <div className="admin-content">
-        {activeTab === 'overview' && (
+
+        {activeTab === "overview" && (
           <>
             <h1>Dashboard Overview</h1>
-            <p className="admin-subtitle">Monitor your platform's performance</p>
-            
+
             <div className="admin-cards">
               <div className="admin-card">
-                <div className="card-icon">👥</div>
-                <h3>Total Users</h3>
-                <div className="card-value">{stats.totalUsers}</div>
+                👥 <h3>Total Users</h3>
+                <div>{stats.totalUsers}</div>
               </div>
-              
-              <div className="admin-card">
-                <div className="card-icon">💬</div>
-                <h3>Active Chats</h3>
-                <div className="card-value">{stats.activeChats}</div>
-              </div>
-              
-              <div className="admin-card">
-                <div className="card-icon">📝</div>
-                <h3>Completed Forms</h3>
-                <div className="card-value">{stats.completedQuestionnaires}</div>
-              </div>
-              
-              <div className="admin-card">
-                <div className="card-icon">⏳</div>
-                <h3>Pending Reviews</h3>
-                <div className="card-value">{stats.pendingReviews}</div>
-              </div>
-            </div>
 
-            <div className="recent-activity">
-              <h2>Recent Activity</h2>
-              <div className="activity-list">
-                <div className="activity-item">
-                  <span className="activity-time">2 hours ago</span>
-                  <span className="activity-desc">New user registered</span>
-                </div>
-                <div className="activity-item">
-                  <span className="activity-time">5 hours ago</span>
-                  <span className="activity-desc">Questionnaire completed by user</span>
-                </div>
+              <div className="admin-card">
+                💬 <h3>Active Chats</h3>
+                <div>{stats.activeChats}</div>
+              </div>
+
+              <div className="admin-card">
+                📝 <h3>Completed Forms</h3>
+                <div>{stats.completedQuestionnaires}</div>
+              </div>
+
+              <div className="admin-card">
+                ⏳ <h3>Pending Reviews</h3>
+                <div>{stats.pendingReviews}</div>
               </div>
             </div>
           </>
         )}
 
-        {activeTab === 'users' && (
+        {activeTab === "users" && (
           <>
             <h1>User Management</h1>
-            <p className="admin-subtitle">View and manage registered users</p>
-            
-            <div className="data-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Registered</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {users.map(user => (
-                    <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                      <td>
-                        <span className={`status ${user.active ? 'active' : 'inactive'}`}>
-                          {user.active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td>
-                        <button className="action-btn">View</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </>
         )}
 
-        {activeTab === 'responses' && (
+        {activeTab === "responses" && (
           <>
             <h1>Questionnaire Responses</h1>
-            <p className="admin-subtitle">Review user mental health assessments</p>
-            
-            <div className="data-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Response ID</th>
-                    <th>User</th>
-                    <th>Date</th>
-                    <th>Score</th>
-                    <th>Risk Level</th>
-                    <th>Actions</th>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Score</th>
+                  <th>Risk</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {responses.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.id}</td>
+                    <td>{r.userName}</td>
+                    <td>{r.score}</td>
+                    <td>{r.riskLevel}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {responses.map(response => (
-                    <tr key={response.id}>
-                      <td>{response.id}</td>
-                      <td>{response.userName}</td>
-                      <td>{new Date(response.submittedAt).toLocaleDateString()}</td>
-                      <td>{response.score}</td>
-                      <td>
-                        <span className={`risk-level ${response.riskLevel}`}>
-                          {response.riskLevel}
-                        </span>
-                      </td>
-                      <td>
-                        <button className="action-btn">Review</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </>
         )}
 
-        {activeTab === 'chats' && (
-          <>
-            <h1>Chat Sessions</h1>
-            <p className="admin-subtitle">Monitor ongoing and past conversations</p>
-            <div className="info-message">
-              Chat session monitoring coming soon...
-            </div>
-          </>
-        )}
+        {activeTab === "chats" && <h2>Chat Sessions Coming Soon</h2>}
+        {activeTab === "analytics" && <h2>Analytics Coming Soon</h2>}
+        {activeTab === "settings" && <h2>Settings Coming Soon</h2>}
 
-        {activeTab === 'analytics' && (
-          <>
-            <h1>Analytics</h1>
-            <p className="admin-subtitle">Insights and trends</p>
-            <div className="info-message">
-              Advanced analytics dashboard coming soon...
-            </div>
-          </>
-        )}
-
-        {activeTab === 'settings' && (
-          <>
-            <h1>Settings</h1>
-            <p className="admin-subtitle">Configure your admin preferences</p>
-            <div className="settings-section">
-              <h3>General Settings</h3>
-              <div className="setting-item">
-                <label>Platform Name</label>
-                <input type="text" defaultValue="MindCare" />
-              </div>
-              <button className="save-btn">Save Changes</button>
-            </div>
-          </>
-        )}
       </div>
     </div>
   );

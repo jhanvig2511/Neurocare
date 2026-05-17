@@ -13,21 +13,11 @@ const app = express();
 const server = http.createServer(app);
 
 /* =======================
-   ENVIRONMENT SETUP
+   ENV FRONTEND URL
 ======================= */
 const FRONTEND_URL =
   process.env.FRONTEND_URL ||
   "http://localhost:3000";
-
-/* =======================
-   SOCKET.IO
-======================= */
-const io = new Server(server, {
-  cors: {
-    origin: FRONTEND_URL,
-    methods: ["GET", "POST"],
-  },
-});
 
 /* =======================
    MIDDLEWARE
@@ -42,7 +32,18 @@ app.use(
 app.use(bodyParser.json());
 
 /* =======================
-   ONLINE DOCTORS
+   SOCKET.IO SETUP
+======================= */
+const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+/* =======================
+   ONLINE DOCTORS MAP
 ======================= */
 let onlineDoctors = {};
 
@@ -52,7 +53,7 @@ let onlineDoctors = {};
 io.on("connection", (socket) => {
   console.log("User Connected:", socket.id);
 
-  // Doctor online
+  /* DOCTOR ONLINE */
   socket.on("doctorOnline", (doctorId) => {
     socket.join(doctorId);
     onlineDoctors[doctorId] = socket.id;
@@ -60,7 +61,7 @@ io.on("connection", (socket) => {
     console.log(`Doctor ${doctorId} Online`);
   });
 
-  // Book session
+  /* BOOK SESSION */
   socket.on("bookSession", ({ doctorId, user }) => {
     io.to(doctorId).emit("newBooking", {
       message: `${user} booked a session`,
@@ -69,13 +70,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Join chat room
+  /* JOIN CHAT ROOM */
   socket.on("joinRoom", (roomId) => {
     socket.join(roomId);
     console.log("Joined room:", roomId);
   });
 
-  // Send message
+  /* SEND MESSAGE */
   socket.on("sendMessage", (data) => {
     io.to(data.roomId).emit("receiveMessage", data);
   });

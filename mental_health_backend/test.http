@@ -1,4 +1,4 @@
-POST http://localhost:5000/api/chat
+POST https://neurocare-production.up.railway.app/api/chat
 Content-Type: application/json
 
 {

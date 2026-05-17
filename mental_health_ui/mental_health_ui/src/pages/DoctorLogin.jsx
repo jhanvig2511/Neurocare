@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CONFIG from "../config";
 
 function DoctorLogin() {
-
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const login = async () => {
+    setLoading(true);
+    setError("");
 
     try {
-
       const res = await axios.post(
-        "http://localhost:5000/api/therapist/doctor-login",
+        `${CONFIG.BASE_URL}/api/therapist/doctor-login`,
         {
           email,
           password,
@@ -25,54 +25,58 @@ function DoctorLogin() {
       );
 
       if (res.data.success) {
-
         localStorage.setItem(
           "doctor",
           JSON.stringify(res.data.doctor)
         );
 
-        navigate("/doctor");
-
+        navigate("/doctor-dashboard");
       } else {
-
-        alert("Invalid Login");
+        setError("Invalid login credentials");
       }
-
     } catch (err) {
-
       console.log(err);
+      setError("Server error. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "40px" }}>
-
+    <div style={{ padding: "40px", maxWidth: "400px" }}>
       <h1>Doctor Login</h1>
+
+      {error && (
+        <p style={{ color: "red" }}>{error}</p>
+      )}
 
       <input
         type="email"
         placeholder="Email"
-        onChange={(e) =>
-          setEmail(e.target.value)
-        }
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ display: "block", marginBottom: "10px", width: "100%" }}
       />
-
-      <br /><br />
 
       <input
         type="password"
         placeholder="Password"
-        onChange={(e) =>
-          setPassword(e.target.value)
-        }
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ display: "block", marginBottom: "10px", width: "100%" }}
       />
 
-      <br /><br />
-
-      <button onClick={login}>
-        Login
+      <button
+        onClick={login}
+        disabled={loading}
+        style={{
+          padding: "10px",
+          width: "100%",
+          cursor: "pointer",
+        }}
+      >
+        {loading ? "Logging in..." : "Login"}
       </button>
-
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import CONFIG from "../config";
 
 function TherapistChat() {
   const { sessionId } = useParams();
@@ -8,12 +9,11 @@ function TherapistChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  // ✅ move function INSIDE useEffect (BEST FIX for CI builds)
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/therapist/messages/${sessionId}`
+          `${CONFIG.BASE_URL}/api/therapist/messages/${sessionId}`
         );
         setMessages(res.data);
       } catch (err) {
@@ -23,20 +23,17 @@ function TherapistChat() {
 
     fetchMessages();
 
-    const interval = setInterval(() => {
-      fetchMessages();
-    }, 2000);
+    const interval = setInterval(fetchMessages, 2000);
 
     return () => clearInterval(interval);
-
   }, [sessionId]);
 
   const sendMessage = async () => {
-    if (!input) return;
+    if (!input.trim()) return;
 
     try {
       await axios.post(
-        "http://localhost:5000/api/therapist/message",
+        `${CONFIG.BASE_URL}/api/therapist/message`,
         {
           session_id: sessionId,
           sender: "user",
@@ -55,9 +52,9 @@ function TherapistChat() {
       <h2>💬 Therapist Chat</h2>
 
       <div className="chat-box">
-        {messages.map((msg) => (
+        {messages.map((msg, index) => (
           <div
-            key={msg.id}
+            key={msg.id || index}
             className={msg.sender === "user" ? "user-msg" : "doctor-msg"}
           >
             {msg.message}

@@ -136,28 +136,6 @@ export default function Register() {
     }
   };
 
-  /* =========================
-     STEP INFO
-  ========================= */
-  const stepInfo = [
-    {
-      title: "Personal Info",
-      desc: "Tell us about yourself",
-    },
-    {
-      title: "Background",
-      desc: "Your experience",
-    },
-    {
-      title: "Mental Health",
-      desc: "Your journey",
-    },
-    {
-      title: "Preferences",
-      desc: "Final touches",
-    },
-  ];
-
   return (
     <div className="register-page">
       <div className="register-container">
@@ -173,14 +151,6 @@ export default function Register() {
             </button>
 
             <h1>Welcome to NeuroCare 🌿</h1>
-
-            <h3>
-              {stepInfo[step - 1].title}
-            </h3>
-
-            <p>
-              {stepInfo[step - 1].desc}
-            </p>
           </div>
 
           {/* ERROR */}

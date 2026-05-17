@@ -13,10 +13,9 @@ const app = express();
 const server = http.createServer(app);
 
 /* =======================
-   FRONTEND URL (PRODUCTION SAFE)
+   ENV
 ======================= */
-const FRONTEND_URL =
-  process.env.FRONTEND_URL || "*";
+const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
 /* =======================
    MIDDLEWARE
@@ -31,7 +30,7 @@ app.use(
 app.use(bodyParser.json());
 
 /* =======================
-   SOCKET.IO SETUP
+   SOCKET.IO
 ======================= */
 const io = new Server(server, {
   cors: {
@@ -42,25 +41,16 @@ const io = new Server(server, {
 });
 
 /* =======================
-   ONLINE DOCTORS MAP
-======================= */
-let onlineDoctors = {};
-
-/* =======================
-   SOCKET CONNECTION
+   SOCKET EVENTS
 ======================= */
 io.on("connection", (socket) => {
   console.log("User Connected:", socket.id);
 
-  /* DOCTOR ONLINE */
   socket.on("doctorOnline", (doctorId) => {
     socket.join(doctorId);
-    onlineDoctors[doctorId] = socket.id;
-
     console.log(`Doctor ${doctorId} Online`);
   });
 
-  /* BOOK SESSION */
   socket.on("bookSession", ({ doctorId, user }) => {
     io.to(doctorId).emit("newBooking", {
       message: `${user} booked a session`,
@@ -69,13 +59,10 @@ io.on("connection", (socket) => {
     });
   });
 
-  /* JOIN CHAT ROOM */
   socket.on("joinRoom", (roomId) => {
     socket.join(roomId);
-    console.log("Joined room:", roomId);
   });
 
-  /* SEND MESSAGE */
   socket.on("sendMessage", (data) => {
     io.to(data.roomId).emit("receiveMessage", data);
   });
@@ -102,7 +89,7 @@ app.use("/api/therapist", therapistRoutes);
    TEST ROUTE
 ======================= */
 app.get("/", (req, res) => {
-  res.send("Mental Health Backend Running 🚀");
+  res.json({ status: "Mental Health Backend Running 🚀" });
 });
 
 /* =======================
@@ -114,20 +101,18 @@ app.get("/users", (req, res) => {
   db.query(sql, (err, results) => {
     if (err) {
       console.error("DB Error:", err.message);
-      return res.status(500).json({
-        message: "Error fetching users",
-      });
+      return res.status(500).json({ message: "Error fetching users" });
     }
 
-    res.status(200).json(results);
+    res.json(results);
   });
 });
 
 /* =======================
-   SERVER START
+   IMPORTANT FIX (RAILWAY)
 ======================= */
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8080;
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

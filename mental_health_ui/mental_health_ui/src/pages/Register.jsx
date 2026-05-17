@@ -63,25 +63,38 @@ export default function Register() {
     }
   };
 
-  const handleCompleteRegistration = async () => {
-    setLoading(true);
-
+  const handleRegister = async () => {
     try {
+      setLoading(true);
+
       const response = await axios.post(
         `${BASE_URL}/api/auth/register-complete`,
         formData
       );
 
       if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem(
+          "token",
+          response.data.token
+        );
+
+        localStorage.setItem(
+          "userId",
+          response.data.user.id
+        );
+
+        localStorage.setItem(
+          "userName",
+          response.data.user.name
+        );
 
         alert("Registration Successful 🌿");
 
         navigate("/user-dashboard");
       }
-    } catch (error) {
+    } catch (err) {
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
           "Registration failed"
       );
     } finally {
@@ -104,29 +117,33 @@ export default function Register() {
             </div>
           )}
 
+          {/* STEP 1 */}
           {step === 1 && (
             <div className="form-section">
 
+              <label>Name</label>
               <input
                 type="text"
                 name="name"
-                placeholder="Name"
+                placeholder="Enter your name"
                 value={formData.name}
                 onChange={handleChange}
               />
 
+              <label>Email</label>
               <input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
               />
 
+              <label>Password</label>
               <input
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder="Enter password"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -134,29 +151,33 @@ export default function Register() {
             </div>
           )}
 
+          {/* STEP 2 */}
           {step === 2 && (
             <div className="form-section">
 
+              <label>Age</label>
               <input
                 type="number"
                 name="age"
-                placeholder="Age"
+                placeholder="Enter age"
                 value={formData.age}
                 onChange={handleChange}
               />
 
+              <label>Gender</label>
               <input
                 type="text"
                 name="gender"
-                placeholder="Gender"
+                placeholder="Enter gender"
                 value={formData.gender}
                 onChange={handleChange}
               />
 
+              <label>Location</label>
               <input
                 type="text"
                 name="location"
-                placeholder="Location"
+                placeholder="Enter location"
                 value={formData.location}
                 onChange={handleChange}
               />
@@ -164,28 +185,32 @@ export default function Register() {
             </div>
           )}
 
+          {/* STEP 3 */}
           {step === 3 && (
             <div className="form-section">
 
+              <label>Occupation</label>
               <input
                 type="text"
                 name="occupation"
-                placeholder="Occupation"
+                placeholder="Enter occupation"
                 value={formData.occupation}
                 onChange={handleChange}
               />
 
+              <label>Education</label>
               <input
                 type="text"
                 name="education"
-                placeholder="Education"
+                placeholder="Enter education"
                 value={formData.education}
                 onChange={handleChange}
               />
 
+              <label>Goals</label>
               <textarea
                 name="goals"
-                placeholder="Goals"
+                placeholder="Your goals"
                 value={formData.goals}
                 onChange={handleChange}
               />
@@ -193,21 +218,24 @@ export default function Register() {
             </div>
           )}
 
+          {/* STEP 4 */}
           {step === 4 && (
             <div className="form-section">
 
+              <label>Emergency Contact Name</label>
               <input
                 type="text"
                 name="emergencyName"
-                placeholder="Emergency Contact Name"
+                placeholder="Emergency contact name"
                 value={formData.emergencyName}
                 onChange={handleChange}
               />
 
+              <label>Emergency Contact Phone</label>
               <input
                 type="text"
                 name="emergencyPhone"
-                placeholder="Emergency Contact Phone"
+                placeholder="Emergency contact phone"
                 value={formData.emergencyPhone}
                 onChange={handleChange}
               />
@@ -233,7 +261,7 @@ export default function Register() {
               </button>
             ) : (
               <button
-                onClick={handleCompleteRegistration}
+                onClick={handleRegister}
                 disabled={loading}
               >
                 {loading

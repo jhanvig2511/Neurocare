@@ -1,5 +1,6 @@
 node_modules/
-.venv/
 venv/
-__pycache__/
+.venv/
+mental_health_ai/venv/
 uploads/
+__pycache__/

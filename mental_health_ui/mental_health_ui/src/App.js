@@ -10,7 +10,7 @@ import Chat from "./pages/Chat";
 import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
 
-import VoiceChat from "./pages/VoiceChat";
+
 
 import Therapist from "./pages/Therapists";
 import TherapistChat from "./pages/Therapistchat";
@@ -75,12 +75,7 @@ function App() {
         element={<Therapist />}
       />
 
-      {/* VOICE CHAT */}
-      <Route
-        path="/voicechat"
-        element={<VoiceChat />}
-      />
-
+      
       {/* THERAPIST CHAT */}
       <Route
         path="/therapistchat/:sessionId"

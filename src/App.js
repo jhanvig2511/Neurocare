@@ -14,7 +14,7 @@ import AdminDashboard from "./components/AdminDashboard";
 
 // THERAPISTS
 import Therapist from "./pages/Therapists";
-import TherapistChat from "./pages/TherapistChat";
+import TherapistChat from "./pages/Therapistchat.jsx";
 
 // DOCTOR
 import DoctorPanel from "./pages/DoctorPanel";

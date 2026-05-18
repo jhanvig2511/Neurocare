@@ -4,58 +4,81 @@ import axios from "axios";
 import "../styles/login.css";
 
 /* 🌐 BACKEND URL */
-const BASE_URL = "https://neurocare-production.up.railway.app";
+const BASE_URL = "https://neurocare-backend-3k89.onrender.com";
 
 function Login() {
   const [role, setRole] = useState("user");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
-        email,
-        password,
-        role,
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        {
+          email,
+          password,
+          role,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 10000, // prevents infinite waiting
+        }
+      );
 
-      /* SAVE TOKEN (IMPORTANT) */
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (res.data && res.data.token) {
+        /* SAVE TOKEN */
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      /* REDIRECT BASED ON ROLE */
-      if (role === "user") {
-        navigate("/user-dashboard");
+        /* REDIRECT */
+        if (role === "user") {
+          navigate("/user-dashboard");
+        } else {
+          navigate("/admin/dashboard");
+        }
       } else {
-        navigate("/admin/dashboard");
+        alert("Invalid server response ❌");
       }
 
     } catch (err) {
-      console.log(err);
-      alert("Login failed ❌ Check credentials or server");
+      console.log("Login Error:", err);
+
+      if (err.code === "ECONNABORTED") {
+        alert("Server timeout ❌ Please try again");
+      } else if (err.response) {
+        alert(err.response.data.message || "Invalid credentials ❌");
+      } else {
+        alert("Server not reachable ❌ Check backend or internet");
+      }
+
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
 
-      {/* Left Side */}
+      {/* LEFT SIDE */}
       <div className="login-left">
         <h1>Welcome Back 🌱</h1>
-        <p>
-          Take a breath. You’re entering a safe and supportive space.
-        </p>
+        <p>Take a breath. You’re entering a safe and supportive space.</p>
       </div>
 
-      {/* Right Side */}
+      {/* RIGHT SIDE */}
       <div className="login-right">
         <div className="login-card">
 
-          {/* Role Toggle */}
+          {/* ROLE TOGGLE */}
           <div className="role-toggle">
             <button
               type="button"
@@ -74,9 +97,7 @@ function Login() {
             </button>
           </div>
 
-          <h2>
-            {role === "user" ? "User Login" : "Admin Login"}
-          </h2>
+          <h2>{role === "user" ? "User Login" : "Admin Login"}</h2>
 
           <form onSubmit={handleSubmit}>
             <input
@@ -95,8 +116,8 @@ function Login() {
               required
             />
 
-            <button type="submit" className="btn-primary">
-              Login
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
